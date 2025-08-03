@@ -23,6 +23,7 @@ Educational Use Only! This project is for ethical hacking and red team research.
 Clone this repository:
 
 git clone https://github.com/YourUsername/Dominion.git
+
 cd Dominion
 
 Run the setup script:
