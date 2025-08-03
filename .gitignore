@@ -1,0 +1,29 @@
+
+---
+
+
+```gitignore
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# PyInstaller build files
+build/
+dist/
+*.spec
+
+# Config
+config.py
+
+# Wine files
+*.exe
+*.msi
+*.pyd
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
