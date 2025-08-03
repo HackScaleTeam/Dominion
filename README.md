@@ -1,56 +1,61 @@
+# Dominion
+
 ![Dominion Banner](assets/dominion_banner.png)
 
-# Dominion Keylogger
-
-Dominion is an educational cross-platform keylogger that logs keystrokes and sends them to a private Discord channel using webhooks.
-Fully automated — build for Windows or Linux.
-
-Educational Use Only! This project is for ethical hacking and red team research.
+Dominion is a cross-platform educational keylogger for Red Teams and ethical hacking research.  
+It captures keystrokes and sends logs to a private Discord channel using webhooks.
 
 ---
 
 ## Features
 
-- Log keystrokes silently.
-- Send logs to Discord webhook.
-- Supports Windows EXE (via Wine) and Linux binary.
-- Easy setup script (setup.py).
+- Logs all keystrokes silently.
+- Sends logs to a private Discord webhook.
+- Supports Windows EXE (Wine) and Linux binary.
+- Simple automated builder (`setup.py`).
 
 ---
 
-## Setup
+## Quick Start
 
 Clone this repository:
 
-git clone https://github.com/YourUsername/Dominion.git
-
+```bash
+git clone https://github.com/HackScaleTeam/Dominion.git
 cd Dominion
+```
 
 Run the setup script:
 
+**For Windows EXE (via Wine):**
+```bash
 python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --windows
+```
 
-or for Linux:
-
+**For Linux binary:**
+```bash
 python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --linux
+```
 
-The setup script:
+The setup script will:
+- Check your environment (Wine/Python)
+- Install missing dependencies
+- Build the binary to `/dist/`
 
-Checks Python and Wine.
-Installs dependencies if missing.
-Builds your EXE or binary to /dist/.
-
-Example:
-
+**Example:**
+```bash
 python3 setup.py --webhook https://discord.com/api/webhooks/XXXXX/YYYYY --windows
+```
 
+---
 
+## License
 
+MIT License — see [LICENSE](LICENSE).
 
-Legal Notice
-This tool is for educational purposes only.
-Use it responsibly on your own machines, test environments, or with explicit permission.
+---
 
-License
-This project is licensed under the MIT License.
-See LICENSE for details.
+## Disclaimer
+
+Dominion is for **educational and authorized testing only**.  
+Use it only on machines you own or have permission to test.
