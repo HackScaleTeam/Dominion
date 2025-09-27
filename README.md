@@ -67,3 +67,10 @@ Dominion is for **educational and authorized testing only**.
 Use it only on machines you own or have permission to test.
 
 
+## Support / Donate
+
+If you find this project useful, you can support development via [PayPal](https://paypal.me/HafizMohammed766) or [Bitcoin](https://s.binance.com/SQ9HmxEB).
+
+Thanks for supporting the project! 💙
+
+
