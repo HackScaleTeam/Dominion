@@ -5,6 +5,8 @@
 [![Twitter URL](https://img.shields.io/twitter/follow/HackScale?style=plastic&logo=twitter)](https://twitter.com/_hackscale_)
 [![YouTube URL](https://img.shields.io/youtube/channel/views/UCGY_Cnhao2lebIIYYb2jovA?style=plastic&logo=youtube)](https://www.youtube.com/channel/UCGY_Cnhao2lebIIYYb2jovA)
 [![LinkedIn](https://img.shields.io/badge/Linkedin-blue?style=plastic&logo=linkedin&logoColor=#0A66C2)](https://www.linkedin.com/in/samir-walied-68907a345)
+[![Donate with PayPal](https://img.shields.io/badge/PayPal-Donate-blue?style=plastic&logo=paypal)](https://paypal.me/HafizMohammed766)
+[![Donate Bitcoin](https://img.shields.io/badge/Bitcoin-BTC-orange?style=plastic&logo=bitcoin)](https://s.binance.com/SQ9HmxEB)
 
 Dominion is a cross-platform educational keylogger for Red Teams and ethical hacking research.  
 It captures keystrokes and sends logs to a private Discord channel using webhooks.
