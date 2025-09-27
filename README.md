@@ -63,3 +63,11 @@ MIT License — see [LICENSE](LICENSE).
 
 Dominion is for **educational and authorized testing only**.  
 Use it only on machines you own or have permission to test.
+
+## Official Discord Channel
+Join us in [our Discord](https://discord.gg/gTnX9qKd) with any comments, questions, concerns, or problems!
+
+<p align="center">
+<a href="https://discord.gg/gTnX9qKd">
+<img src="https://discordapp.com/api/guilds/1080378400235073536/widget.png?style=banner3"/>
+</p>
