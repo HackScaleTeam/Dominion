@@ -12,6 +12,8 @@
 Dominion is a cross-platform educational keylogger for Red Teams and ethical hacking research.  
 It captures keystrokes and sends logs to a private Discord channel using webhooks.
 
+[Click here for a video demonstration](https://youtu.be/gZNiMI4EFMs?si=ISUGVQrQUUNkKG9u)
+
 ---
 
 ## Features
