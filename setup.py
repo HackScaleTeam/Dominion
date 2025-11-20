@@ -79,7 +79,8 @@ def main():
                 subprocess.Popen(["wine", "python311.exe"]).wait()
                 input("[!] Please complete the installer wizard fully, then press Enter to re-check...")
 
-        # ✅✅ بعد التثبيت تأكد من pip + pyinstaller + requests + pynput + thread6
+
+        
         print("[+] Checking & Installing required Python packages...")
         subprocess.run(['wine', wine_python, "-m", "pip", "install", "--upgrade", "pip"])
         subprocess.run(['wine', wine_python, "-m", "pip", "install", "pyinstaller", "pynput", "thread6", "requests"])
@@ -100,7 +101,7 @@ def main():
         print("[+] Building Linux binary...")
         subprocess.run(["pyinstaller", "--onefile", "start.py"])
 
-    print("[✔] All done! Check /dist/ for your output.")
+    print("[+] All done! Check /dist/ for your output.")
 
 # ==========================================
 if __name__ == "__main__":
