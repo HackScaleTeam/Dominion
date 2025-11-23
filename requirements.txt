@@ -1,0 +1,3 @@
+pyperclip
+discord.py
+colorama 
