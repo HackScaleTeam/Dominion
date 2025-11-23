@@ -1,0 +1,5 @@
+GUILD_ID = ""
+BOT_TOKEN = ""
+CHANNEL_ID = ""
+WEBHOOK_URL = ""
+COMMAND_PREFIX = "!""
